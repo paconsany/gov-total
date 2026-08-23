@@ -1,0 +1,12 @@
+export type ActStatus='MINUTA'|'AGUARDANDO APROVAÇÃO'|'APROVADO'|'PUBLICADO'
+export type EditionStatus='EM PREPARAÇÃO'|'PRONTA PARA PUBLICAÇÃO'|'PUBLICADA'
+export type EditionType='ORDINÁRIA'|'EXTRAORDINÁRIA'
+export type GazetteEvent={action:string;user:string;at:string}
+export type GazetteSubsection={id:string;name:string;active:boolean;order:number}
+export type GazetteSection={id:string;name:string;active:boolean;order:number;subsections:GazetteSubsection[]}
+export type GazetteAttachment={id:string;name:string;path:string;label:string}
+export type GazetteSettings={municipality:string;title:string;logo:string;headerText:string;footerText:string}
+export type OfficialAct={id:string;type:string;number:string;year:number;date:string;department:string;sectionId:string;subsectionId:string;title:string;summary:string;content:string;owner:string;status:ActStatus;editionId?:string;relatedActId?:string;attachments?:GazetteAttachment[];createdAt:string;createdBy:string;approvedAt?:string;approvedBy?:string;events:GazetteEvent[]}
+export type GazetteEdition={id:string;number:number;year:number;type:EditionType;date:string;status:EditionStatus;actIds:string[];publishedAt?:string;publishedBy?:string;events:GazetteEvent[]}
+export type GazetteState={settings?:GazetteSettings;sections:GazetteSection[];acts:OfficialAct[];editions:GazetteEdition[]}
+export type GazetteFilters={keyword:string;number:string;date:string;from:string;to:string;sectionId:string;subsectionId:string;department:string;actType:string}

@@ -1,0 +1,16 @@
+import type { GazetteEdition,GazetteFilters,GazetteSection,OfficialAct } from './types'
+export const padEdition=(number:number)=>String(number).padStart(6,'0')
+export const editionLabel=(edition:Pick<GazetteEdition,'number'|'year'>)=>`${padEdition(edition.number)}/${edition.year}`
+export const editionPath=(edition:Pick<GazetteEdition,'number'|'year'>)=>`/diario/${edition.year}/${padEdition(edition.number)}`
+export const nextEditionNumber=(editions:GazetteEdition[],year:number)=>Math.max(0,...editions.filter(x=>x.year===year).map(x=>x.number))+1
+export const canUseEditionNumber=(editions:GazetteEdition[],year:number,number:number)=>number===nextEditionNumber(editions,year)&&!editions.some(x=>x.year===year&&x.number===number)
+export const isEditionMutable=(edition:GazetteEdition)=>edition.status!=='PUBLICADA'
+export const publiclyVisibleActs=(acts:OfficialAct[])=>acts.filter(x=>x.status==='PUBLICADO'&&Boolean(x.editionId))
+export const publicEditions=(editions:GazetteEdition[])=>editions.filter(x=>x.status==='PUBLICADA').sort((a,b)=>`${b.date}-${String(b.number).padStart(8,'0')}`.localeCompare(`${a.date}-${String(a.number).padStart(8,'0')}`))
+export const move=<T,>(items:T[],index:number,direction:-1|1)=>{const target=index+direction;if(target<0||target>=items.length)return items;const copy=[...items];[copy[index],copy[target]]=[copy[target],copy[index]];return copy}
+export const sectionName=(sections:GazetteSection[],id:string)=>sections.find(x=>x.id===id)?.name??'Sem seção'
+export const subsectionName=(sections:GazetteSection[],sectionId:string,id:string)=>sections.find(x=>x.id===sectionId)?.subsections.find(x=>x.id===id)?.name??'Sem subseção'
+export const editionActs=(edition:GazetteEdition,acts:OfficialAct[])=>edition.actIds.map(id=>acts.find(x=>x.id===id)).filter((x):x is OfficialAct=>Boolean(x))
+export const groupedSummary=(edition:GazetteEdition,acts:OfficialAct[],sections:GazetteSection[])=>sections.slice().sort((a,b)=>a.order-b.order).map(section=>({section,subsections:section.subsections.slice().sort((a,b)=>a.order-b.order).map(subsection=>({subsection,acts:editionActs(edition,acts).filter(x=>x.sectionId===section.id&&x.subsectionId===subsection.id)})).filter(x=>x.acts.length)})).filter(x=>x.subsections.length)
+export const emptyFilters: GazetteFilters={keyword:'',number:'',date:'',from:'',to:'',sectionId:'',subsectionId:'',department:'',actType:''}
+export const filterEditions=(editions:GazetteEdition[],acts:OfficialAct[],filters:GazetteFilters)=>publicEditions(editions).filter(edition=>{const selected=editionActs(edition,acts);const corpus=selected.flatMap(x=>[x.title,x.summary,x.content]).join(' ').toLocaleLowerCase('pt-BR');return (!filters.keyword||corpus.includes(filters.keyword.toLocaleLowerCase('pt-BR')))&&(!filters.number||editionLabel(edition).includes(filters.number))&&(!filters.date||edition.date===filters.date)&&(!filters.from||edition.date>=filters.from)&&(!filters.to||edition.date<=filters.to)&&(!filters.sectionId||selected.some(x=>x.sectionId===filters.sectionId))&&(!filters.subsectionId||selected.some(x=>x.subsectionId===filters.subsectionId))&&(!filters.department||selected.some(x=>x.department===filters.department))&&(!filters.actType||selected.some(x=>x.type===filters.actType))})
