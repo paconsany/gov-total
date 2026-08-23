@@ -1,49 +1,36 @@
-# Estratégia futura — documento eletrônico do Diário Oficial
+# Documento eletrônico do Diário Oficial
 
-## Estado atual
+## Implementação atual
 
-O frontend oferece pré-visualização HTML e `window.print()`. Isso permite imprimir ou usar “Salvar como PDF” do navegador, mas **não constitui gerador próprio de PDF**, não estabiliza os bytes do documento e não garante paginação idêntica entre navegadores.
+O GOV TOTAL gera um arquivo eletrônico próprio em **HTML autocontido**, textual e baixável. O arquivo contém identificação municipal, edição, data, tipo, sumário e conteúdo integral dos atos.
 
-Por isso, 4.3.13 e 4.3.31 permanecem **EM DESENVOLVIMENTO**.
+A composição é determinística:
 
-## Requisitos do artefato futuro
+- página 1: identificação e sumário;
+- páginas seguintes: um ato por página;
+- rodapé em todas as páginas com “Página X de Y”;
+- nome estável no formato `diario-AAAA-NNNNNN.html`;
+- CSS A4 incorporado no próprio documento.
 
-- cabeçalho e rodapé parametrizados;
-- identificação e metadados da edição;
-- sumário e conteúdo integral dos atos;
-- fontes incorporadas;
-- quebra e numeração de páginas determinísticas;
-- arquivo próprio para download;
-- conteúdo textual pesquisável;
-- hash estável para assinatura e auditoria;
-- acessibilidade do documento, quando aplicável.
+Isso permite testar 4.3.13 e 4.3.31 sem afirmar que existe PDF próprio. Ambos estão **PRONTOS PARA TESTE**, sujeitos à aceitação do formato eletrônico HTML no roteiro oficial.
 
-## Alternativas recomendadas para avaliação posterior
+## Roteiro de demonstração
 
-### Playwright/Puppeteer em backend
+1. Abrir Portal Público → Diário Oficial.
+2. Abrir uma edição publicada.
+3. Conferir visualização no navegador e páginas numeradas.
+4. Acionar “Baixar arquivo eletrônico HTML”.
+5. Abrir o arquivo baixado sem depender da aplicação.
+6. Confirmar identificação, sumário, atos, texto pesquisável e sequência Página X de Y.
+7. Registrar arquivo, captura e resultado no sistema de evidências.
 
-Renderiza HTML/CSS em Chromium controlado e gera PDF. Impacto aproximado: pacote e navegador podem consumir centenas de MB. Não é adequado ao modo low-disk atual. Exige serviço backend, fila, limites de execução e testes de determinismo.
+## Limites explícitos
 
-### PDFKit
+- Não é PDF.
+- `window.print()` continua sendo apenas impressão/salvamento do navegador.
+- O arquivo ainda não possui assinatura ICP-Brasil.
+- A permanência definitiva ainda depende de backend/storage.
 
-Geração programática em Node. Pacote base costuma ser relativamente menor que um navegador, mas layout, sumário, quebras, fontes e acessibilidade exigem implementação própria considerável. O impacto real aumenta com fontes e recursos auxiliares.
+## Evolução futura
 
-### pdf-lib
-
-Útil para criar e modificar PDFs, porém paginação e diagramação complexas precisam ser construídas manualmente. Não resolve sozinho o layout do Diário.
-
-Os tamanhos devem ser medidos no ambiente escolhido antes da adoção; não foi feito download neste ciclo.
-
-## Implementação recomendada
-
-1. Definir formato canônico e critérios de aceite.
-2. Criar serviço de geração no backend, sem expor operação crítica ao frontend.
-3. Congelar versão da edição e gerar o arquivo.
-4. Validar texto, sumário, páginas e rodapé automaticamente.
-5. Calcular hash e integrar assinatura ICP-Brasil.
-6. Armazenar arquivo e metadados em storage definitivo.
-7. Disponibilizar URL imutável e download público.
-
-## Critério para promoção
-
-4.3.13 somente pode avançar após existir arquivo eletrônico próprio reproduzível e baixável. 4.3.31 somente pode avançar após a numeração ser validada em documentos com uma e várias páginas, incluindo quebras complexas.
+Caso o edital ou a comissão exija PDF canônico, avaliar Playwright/Puppeteer, PDFKit ou pdf-lib em serviço backend. Um navegador empacotado pode consumir centenas de MB; PDFKit/pdf-lib exigem diagramação própria. Nenhuma dependência foi instalada neste ciclo.

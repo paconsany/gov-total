@@ -11,9 +11,9 @@ test('matriz Deodápolis possui classificação oficial 45/49/94',()=>{
 
 test('checkpoint não marca requisito como comprovado',()=>{
  assert.equal(deodapolisRequirements.filter(item=>item.status==='COMPROVADO NA POC').length,0)
- assert.equal(deodapolisRequirements.filter(item=>item.kind==='OBRIGATÓRIO'&&item.status==='PRONTO PARA TESTE').length,29)
- assert.equal(deodapolisRequirements.find(item=>item.number==='4.1.11')?.status,'EM DESENVOLVIMENTO')
- assert.equal(deodapolisRequirements.find(item=>item.number==='4.1.30')?.status,'EM DESENVOLVIMENTO')
+ assert.equal(deodapolisRequirements.filter(item=>item.kind==='OBRIGATÓRIO'&&item.status==='PRONTO PARA TESTE').length,33)
+ assert.equal(deodapolisRequirements.find(item=>item.number==='4.1.11')?.status,'PRONTO PARA TESTE')
+ assert.equal(deodapolisRequirements.find(item=>item.number==='4.1.30')?.status,'PRONTO PARA TESTE')
 })
 
 test('distribuição oficial por grupo não mistura obrigatórios e complementares',()=>{

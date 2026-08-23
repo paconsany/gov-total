@@ -1,10 +1,10 @@
 # Checklist de staging — POC Deodápolis
 
-Este checklist prepara os requisitos 4.1.11 e 4.1.30. Documentação não altera o status atual.
+Este checklist orienta a execução formal dos requisitos 4.1.11 e 4.1.30, atualmente PRONTOS PARA TESTE. Documentação não os torna comprovados.
 
 ## Ambiente-alvo
 
-- URL proposta: `https://poc-deodapolis.govtotal.com.br` — confirmar domínio antes de publicar.
+- URL oficial de demonstração: `https://gov-total.pages.dev`.
 - Não utilizar produção nem dados reais.
 - Certificado emitido por autoridade publicamente confiável, dentro da validade e cobrindo o hostname.
 
@@ -31,4 +31,4 @@ Critério PASSOU: nenhuma comunicação HTTP/WS, certificado válido e nenhum mi
 
 ## Estado
 
-Os dois requisitos permanecem **EM DESENVOLVIMENTO** até execução em staging real.
+Os dois requisitos estão **PRONTOS PARA TESTE**. Permanecem sem comprovação até execução formal e registro de evidência no ambiente público.
