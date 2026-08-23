@@ -11,7 +11,7 @@ const menu:[string,Area][]=[['Visão Geral','overview'],['Portal Institucional',
 const emptyNews:News={id:0,title:'',subtitle:'',content:'',department:'Administração',author:'',cover:'Imagem/capa simulada',date:'2026-08-23',status:'Rascunho',slug:''}
 
 export default function PortalModule(){
- const [data,setData]=useState<PortalState>(initialPortalState);const [gazette,setGazette]=useState<GazetteState>(gazetteDemoState);const [area,setArea]=useState<Area>('overview');const [publicView,setPublicView]=useState(false);const [notice,setNotice]=useState('');const [newsDraft,setNewsDraft]=useState<News>(emptyNews)
+ const [data,setData]=useState<PortalState>(initialPortalState);const [gazette,setGazette]=useState<GazetteState>(gazetteDemoState);const [area,setArea]=useState<Area>(()=>new URLSearchParams(location.search).get('area')==='gazette'?'gazette':'overview');const [publicView,setPublicView]=useState(false);const [notice,setNotice]=useState('');const [newsDraft,setNewsDraft]=useState<News>(emptyNews)
  useEffect(()=>{if(location.pathname.startsWith('/diario/'))setPublicView(true)},[])
  if(publicView)return <PortalPublic data={data} gazette={gazette} onBack={()=>setPublicView(false)}/>
  const updateNews=(key:keyof News,value:string)=>setNewsDraft({...newsDraft,[key]:value,...(key==='title'&&!newsDraft.id?{slug:slugify(value)}:{})})
