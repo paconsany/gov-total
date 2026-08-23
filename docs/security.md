@@ -152,3 +152,19 @@ Nunca reutilizar service-role keys entre ambientes nem expô-las em variáveis `
 - testar concorrência de numeração com múltiplas conexões;
 - definir retenção de auditoria, backup, restauração e resposta a incidentes;
 - revisar policies e funções por segunda pessoa antes do GO de produção.
+
+## Diário Oficial e leitura pública
+
+O acervo do Diário usa defesa em profundidade:
+
+- bucket `official-gazette` privado;
+- `anon` recebe somente `SELECT` de linhas ligadas a edição `published` ou `revoked`;
+- rascunhos exigem vínculo ativo e permissões `gazette.read`/`gazette.manage`;
+- publicação exige a RPC `publish_official_gazette` e a permissão `gazette.publish`;
+- `organization_id` é imutável e FKs compostas evitam vínculos cross-tenant;
+- triggers bloqueiam update/delete destrutivo após a publicação;
+- alterações geram `audit_events` append-only.
+
+A função de publicação é `SECURITY DEFINER` apenas por precisar conferir o arquivo no schema privado do Storage e executar a transição atômica. Ela fixa `search_path`, deriva o ator de `auth.uid()`, revalida tenant/permissão e não é executável por `anon` ou `PUBLIC`.
+
+O SHA-256 do conteúdo textual é calculado no PostgreSQL. O SHA-256 do arquivo é calculado no navegador antes do upload e armazenado como metadado; validação criptográfica servidor-side do binário ainda é uma pendência antes de produção.

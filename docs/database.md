@@ -126,3 +126,18 @@ Após execução real e aprovação dos testes, a primeira integração recomend
 4. somente depois DFD e demais documentos.
 
 O frontend atual não deve ser conectado antes de o ambiente Supabase local/staging comprovar RLS e bootstrap.
+
+## Diário Oficial persistente — Ciclo 3
+
+Migration incremental: `supabase/migrations/20260823075524_official_gazette_persistence.sql`.
+
+| Tabela | Finalidade |
+|---|---|
+| `official_gazette_editions` | edição, numeração, data, status, URL pública e hash final |
+| `official_gazette_acts` | conteúdo integral e snapshot dos dados de classificação do ato |
+| `official_gazette_edition_acts` | composição e ordem imutável dos atos na edição |
+| `official_gazette_files` | metadados do arquivo eletrônico no Storage e SHA-256 informado no upload |
+
+O bucket privado `official-gazette` é criado pela migration. O arquivo deve ser enviado pela API do Storage; a aplicação não escreve diretamente em `storage.objects`. A RPC `publish_official_gazette` exige autenticação, `gazette.publish`, ao menos um ato e um arquivo efetivamente registrado no Storage. A publicação grava hashes, timestamps e eventos de auditoria em uma única transação.
+
+Edições publicadas, atos publicados, composição e arquivos publicados não aceitam overwrite ou exclusão. Correções devem ser novos atos de retificação e novas edições; exclusão definitiva não é exposta ao frontend.
